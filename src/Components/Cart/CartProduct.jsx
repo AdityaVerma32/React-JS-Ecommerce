@@ -3,27 +3,27 @@ import React from 'react';
 function CartProduct({ item, handleQuantityChange, handleDeleteProduct }) {
     return (
         <div
-            key={item.id}
+            key={item.product.id}
             className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md"
         >
             {/* Product Image */}
             <img
-                src={item.image}
-                alt={item.name}
+                src={item.product.productImage}
+                alt={item.product.productName}
                 className="w-24 h-24 object-cover rounded-md"
             />
 
             {/* Product Details */}
             <div className="flex-1 ml-4">
-                <h3 className="text-lg font-semibold text-gray-900">{item.name}</h3>
-                <p className="text-sm text-gray-600">${item.price.toFixed(2)}</p>
+                <h3 className="text-lg font-semibold text-gray-900">{item.product.productName}</h3>
+                <p className="text-sm text-gray-600">${item.product.price.toFixed(2)}</p>
             </div>
 
             {/* Quantity Control */}
             <div className="flex items-center space-x-4">
                 <button
                     className="bg-gray-200 text-gray-800 p-2 rounded-full hover:bg-gray-300"
-                    onClick={() => handleQuantityChange(item.id, 'decrease')}
+                    onClick={() => handleQuantityChange(item.product.id, 'decrease')}
                     disabled={item.quantity <= 1}
                 >
                     <svg
@@ -44,7 +44,7 @@ function CartProduct({ item, handleQuantityChange, handleDeleteProduct }) {
                 <span className="text-lg font-semibold">{item.quantity}</span>
                 <button
                     className="bg-gray-200 text-gray-800 p-2 rounded-full hover:bg-gray-300"
-                    onClick={() => handleQuantityChange(item.id, 'increase')}
+                    onClick={() => handleQuantityChange(item.product.id, 'increase')}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -65,7 +65,7 @@ function CartProduct({ item, handleQuantityChange, handleDeleteProduct }) {
 
             {/* Delete Button */}
             <button
-                onClick={() => handleDeleteProduct(item.id)}
+                onClick={() => handleDeleteProduct(item.product.id)}
                 className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
             >
                 Delete
