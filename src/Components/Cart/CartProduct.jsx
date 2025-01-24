@@ -23,8 +23,7 @@ function CartProduct({ item, handleQuantityChange, handleDeleteProduct }) {
             <div className="flex items-center space-x-4">
                 <button
                     className="bg-gray-200 text-gray-800 p-2 rounded-full hover:bg-gray-300"
-                    onClick={() => handleQuantityChange(item.product.id, 'decrease')}
-                    disabled={item.quantity <= 1}
+                    onClick={() => handleQuantityChange(item.product.id,item.quantity-1)}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +43,7 @@ function CartProduct({ item, handleQuantityChange, handleDeleteProduct }) {
                 <span className="text-lg font-semibold">{item.quantity}</span>
                 <button
                     className="bg-gray-200 text-gray-800 p-2 rounded-full hover:bg-gray-300"
-                    onClick={() => handleQuantityChange(item.product.id, 'increase')}
+                    onClick={() => handleQuantityChange(item.product.id,item.quantity+1)}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

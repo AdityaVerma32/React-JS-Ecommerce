@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setError } from '../Redux/Slice/ErrorSlice';
+import { setErrorMessage } from '../Redux/Slice/PopUpMessageSlice';
 
 const ProtectedRoute = ({ children }) => {
   const dispatch = useDispatch();
@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children }) => {
 
   if (!token) {
     // Redirect to the login page if the token is not present
-    dispatch(setError("Please Log in"));
+    dispatch(setErrorMessage("Please Log in"));
     return <Navigate to="/" />;
   }
 

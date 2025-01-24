@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { mockProducts } from '../../mockProductData'
 import ProductGrid from '../ProductList/ProductGrid'
 import ErrorMessage from '../ErrorMessage';
+import { Navigate } from 'react-router-dom';
 
 function ProductList() {
 
@@ -18,12 +19,11 @@ function ProductList() {
             fetch(import.meta.env.VITE_API_URL + "/products")
                 .then(response => response.json())
                 .then(data => {
-
                     setProducts(data.data);
-                    setLoading(false);
                 })
                 .catch(error => {
                     console.error('There was an error!', error);
+                }).finally(() => {
                     setLoading(false);
                 });
         }

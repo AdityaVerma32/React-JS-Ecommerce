@@ -1,6 +1,11 @@
-import React, { useEffect, useState, useId } from 'react'
+import React, { useEffect, useState } from 'react'
 import CartProduct from '../Components/Cart/CartProduct';
 import axios from 'axios';
+import { setErrorMessage, setSuccessMessage } from '../Redux/Slice/PopUpMessageSlice';
+import { useDispatch } from 'react-redux';
+import ErrorMessage from '../Components/ErrorMessage';
+import SuccessMessage from '../Components/SuccessMessage';
+import Loader from '../Components/Loader';
 
 function CartPage() {
 
@@ -57,52 +62,86 @@ function CartPage() {
     const mockData = false;
     const [cartData, setCartdata] = useState([]);
     const baseUrl = import.meta.env.VITE_API_URL;
+    const dispatch = useDispatch();
+    // If mockData is false, fetch data from the API
+    const token = localStorage.getItem('token'); // Retrieve the token from localStorage or wherever you store it
+    const [loading, setLoading] = useState(false)
+
+    const fetchCartData = async () => {
+        await axios.get(baseUrl + '/cart/products', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        }).then((response) => {
+            // console.log(response)
+            if (response.status === 200) {
+                console.log(response.data.data)
+                setCartdata(response.data.data); // Update state with fetched cart data
+            } else {
+                console.error('Failed to fetch cart data:', response.status);
+            }
+        }).catch((error) => {
+            console.error('Error fetching cart data:', error.message);
+        }).finally(() => {
+            setLoading(false);
+        }); // Make GET request to fetch cart data
+    };
 
     useEffect(() => {
         if (mockData) {
             setCartdata(cartItems);
         } else {
-            // If mockData is false, fetch data from the API
-            const token = localStorage.getItem('token'); // Retrieve the token from localStorage or wherever you store it
-            const fetchCartData = async () => {
-                await axios.get(baseUrl + '/cart/products', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                }).then((response) => {
-                    // console.log(response)
-                    if (response.status === 200) {
-                        console.log(response.data.data)
-                        setCartdata(response.data.data); // Update state with fetched cart data
-                    } else {
-                        console.error('Failed to fetch cart data:', response.status);
-                    }
-                }).catch((error) => {
-                    console.error('Error fetching cart data:', error.message);
-                }); // Make GET request to fetch cart data
-            };
-
+            setLoading(true);   
             fetchCartData();
         }
     }, [mockData])
 
     // Handle Quantity Change (Increase/Decrease)
-    const handleQuantityChange = (id, action) => {
-        setCartItems((prevItems) =>
-            prevItems.map((item) =>
-                item.id === id
-                    ? {
-                        ...item,
-                        quantity: action === 'increase' ? item.quantity + 1 : item.quantity - 1,
-                    }
-                    : item
-            )
-        );
+    const handleQuantityChange = (id, quantity) => {
+        setLoading(true);
+        axios.post(baseUrl + '/cart/update-product/' + id,
+            { quantity: quantity },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            }).then((response) => {
+                if (response.status === 200) {
+                    console.log('Quantity updated successfully');
+                    dispatch(setSuccessMessage('Quantity updated successfully'));
+                    fetchCartData();
+                } else {
+                    console.error('Failed to update quantity:', response.status);
+                    dispatch(setErrorMessage('Failed to update quantity'));
+                }
+            }).catch((error) => {
+                console.error('Failed to update quantity with Error: ', error.message);
+            }).finally(() => {
+                setLoading(false);
+            })
     };
 
     // Handle Delete Product from Cart
     const handleDeleteProduct = (id) => {
-        setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+        setLoading(true);
+        axios.delete(baseUrl + '/cart/delete-product/' + id, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        }).then((response) => {
+            if (response.status === 200) {
+                console.log('Product deleted successfully');
+                dispatch(setSuccessMessage('Product deleted successfully'));
+                fetchCartData();
+            } else {
+                console.error('Failed to delete product:', response.status);
+                dispatch(setErrorMessage('Failed to delete product'));
+            }
+        }).catch((error) => {
+            console.error('Error deleting product:', error.message);
+        }).finally(() => {
+            setLoading(false);
+        });
     };
 
     // Calculate Total Price
@@ -111,8 +150,10 @@ function CartPage() {
     return (
         <>
             <div className="max-w-7xl mx-auto p-6">
+                <SuccessMessage />
+                {/* <ErrorMessage /> */}
+                {loading && <Loader />}
                 <h1 className="text-3xl font-semibold text-gray-900 mb-6">Your Cart</h1>
-
                 {cartData.length === 0 ? (
                     <p className="text-xl text-center text-gray-500">Your cart is empty!</p>
                 ) : (

@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react'
 import Loader from '../Components/Loader';
 import { useParams } from 'react-router-dom';
 import { fetchProductById } from '../api'
+import axios from 'axios';
+import SuccessMessage from '../Components/SuccessMessage';
+import { useDispatch } from 'react-redux';
+import { setSuccessMessage } from '../Redux/Slice/PopUpMessageSlice';
 
 function ProductDetailsPage() {
   // const product = {
@@ -19,6 +23,8 @@ function ProductDetailsPage() {
   const { id } = useParams();
   const [product, setProduct] = useState({});
   const [loading, setLoading] = useState(false);
+  const baseUrl = import.meta.env.VITE_API_URL;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Scroll to the top of the page on initial load
@@ -55,9 +61,33 @@ function ProductDetailsPage() {
 
   if (!product) return <p>Loading...</p>;
 
+  const handleAddToCart = async (id) => {
+    // console.log('Add to cart button clicked with Id: ' + id);
+    setLoading(true);
+    await axios.post(
+      baseUrl + '/cart/add',
+      id,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json', // Ensure the server knows the payload is JSON
+        }
+      }).then((response) => {
+        if(response.status === 200){
+          console.log(response.data)
+          dispatch(setSuccessMessage(response.data.message));
+        }
+      }).catch((error) => {
+        console.error('Error adding product to cart:', error.message);
+      }).finally(()=>{
+        setLoading(false);
+      })
+
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-6">
+      <SuccessMessage />
       {loading && <Loader />} {/* Show loader while loading */}
       <div className="flex flex-col md:flex-row">
         {/* Left Section: Product Image */}
@@ -92,7 +122,9 @@ function ProductDetailsPage() {
             </div>
 
             {/* Add to Cart Button */}
-            <button className="mt-4 sm:mt-0 bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition duration-300">
+            <button
+              onClick={() => handleAddToCart(product.id)}
+              className="mt-4 sm:mt-0 bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition duration-300">
               Add to Cart
             </button>
           </div>

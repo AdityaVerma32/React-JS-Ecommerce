@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { logout } from '../..//Redux/Slice/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setError } from '../../Redux/Slice/ErrorSlice'
 
 function header() {
 
@@ -14,7 +13,8 @@ function header() {
   const { token } = useSelector((state) => state.auth);
   // Example: Check user login status (You can modify this logic based on how you store authentication data, e.g., localStorage, cookies)
   useEffect(() => {
-    if (user) {
+    console.log("State Variable : "+token);
+    if (user && token) {
       setIsLoggedIn(true); // User is logged in
     } else {
       setIsLoggedIn(false); // User is not logged in
@@ -29,16 +29,12 @@ function header() {
 
   const handleCartClick = () => {
     navigate('/cart');
-    // if (!token && !user) {
-    //   dispatch(setError("Please Login to Access Cart"))
-    // } else {
-    //   navigate('/cart');
-    // }
   };
 
   return (
     <header className="flex justify-between items-center bg-gray-800 p-4 shadow-lg">
       {/* Logo */}
+      <Link to={'/'}>
       <div className="flex items-center">
         <img
           src="src/assets/Images/App_logo.jpg"
@@ -47,6 +43,7 @@ function header() {
         />
         <h1 className="text-white text-lg font-bold ml-2">AppName</h1>
       </div>
+      </Link>
 
       {/* Right Section */}
       <div className="flex items-center space-x-4">
