@@ -6,6 +6,7 @@ import Loader from '../Components/Loader';
 import { authorizedFetch } from '../Utils/authorizedFetch';
 import { useDispatch } from 'react-redux';
 import { setSuccessMessage, setErrorMessage } from '../Redux/Slice/PopUpMessageSlice';
+import Swal from 'sweetalert2';
 
 function ShippingDetails() {
     const [savedAddresses, setSavedAddresses] = useState([]);
@@ -107,7 +108,7 @@ function ShippingDetails() {
                     });
                 }
             } catch (e) {
-
+                console.log("Error While adding new Address: " + e);
             } finally {
                 setLoading(false);
             }
@@ -127,6 +128,21 @@ function ShippingDetails() {
             console.log("Issue while fetching Saved Address: ", error)
         } finally {
             setLoading(false);
+        }
+    }
+
+    const handleProceedToPayment = () => {
+        if (!selectedAddress) {
+            Swal.fire({
+                title: 'No selected address',
+                text: "Please select an address to proceed to the checkout process.",
+                icon: 'warning',
+                confirmButtonText: 'Okay',
+                showCancelButton: false,
+                customClass: {
+                    confirmButton: 'bg-blue-500 text-white hover:bg-blue-600',
+                },
+            })
         }
     }
 
@@ -289,8 +305,8 @@ function ShippingDetails() {
             <div className="mt-6 text-right">
                 <button
                     className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-300"
-                    onClick={() => alert(`Proceeding with Address ID: ${selectedAddress}`)}
-                    disabled={!selectedAddress}
+                    onClick={handleProceedToPayment}
+                // disabled={!selectedAddress}
                 >
                     Proceed to Payment
                 </button>

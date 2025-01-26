@@ -2,8 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     cartData: null,
-    loading: false,
-    error: null
 }
 
 const cartSlice = createSlice({
@@ -11,15 +9,8 @@ const cartSlice = createSlice({
     initialState,
     reducers: {
         addCart: (state, action) => {
-            const { success, message, data } = action.payload;
-            state.loading = false;
-            if (success) {
-                state.cartData = data;
-            } else {
-                state.error = message;
-            }
+            state.cartData = action.payload;
         }
-
     }
 })
 

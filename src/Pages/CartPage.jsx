@@ -5,8 +5,8 @@ import { useDispatch } from 'react-redux';
 import SuccessMessage from '../Components/SuccessMessage';
 import Loader from '../Components/Loader';
 import { authorizedFetch } from '../Utils/authorizedFetch';
-
-
+import  { addCart } from '../Redux/Slice/CartSlice';
+import { useNavigate } from 'react-router-dom';
 function CartPage() {
 
     const cartItems = [
@@ -63,12 +63,11 @@ function CartPage() {
     const [cartData, setCartdata] = useState([]);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
+    const navigate = useNavigate();
 
     const fetchCartData = async () => {
-
         try {
             const response = await authorizedFetch("/cart/products", "GET", null, dispatch);
-            // console.log(response);
             if (response.data.success && response.data.data) {
                 setCartdata(response.data.data);
             } else {
@@ -80,6 +79,17 @@ function CartPage() {
             setLoading(false);
         }
     };
+
+    const handleProceedToCheckout = () => {
+        console.log("Inside Cart")
+        if (cartData.length === 0) {
+            dispatch(setErrorMessage('Cart is empty'));
+            return;
+        }else{
+            dispatch(addCart(cartData));
+            navigate('/shipping-address');
+        }
+    }
 
     useEffect(() => {
         if (mockData) {
@@ -159,7 +169,7 @@ function CartPage() {
                         </div>
                         <button
                             className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300"
-                            onClick={() => alert('Proceeding to Checkout')}
+                            onClick={handleProceedToCheckout}
                         >
                             Proceed to Checkout
                         </button>
