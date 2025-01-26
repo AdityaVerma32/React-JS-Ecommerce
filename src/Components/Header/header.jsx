@@ -13,7 +13,6 @@ function header() {
   const { token } = useSelector((state) => state.auth);
   // Example: Check user login status (You can modify this logic based on how you store authentication data, e.g., localStorage, cookies)
   useEffect(() => {
-    console.log("State Variable : "+token);
     if (user && token) {
       setIsLoggedIn(true); // User is logged in
     } else {

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import CartProduct from '../Components/Cart/CartProduct';
-import axios from 'axios';
 import { setErrorMessage, setSuccessMessage } from '../Redux/Slice/PopUpMessageSlice';
 import { useDispatch } from 'react-redux';
-import ErrorMessage from '../Components/ErrorMessage';
 import SuccessMessage from '../Components/SuccessMessage';
 import Loader from '../Components/Loader';
+import { authorizedFetch } from '../Utils/authorizedFetch';
+
 
 function CartPage() {
 
@@ -61,91 +61,70 @@ function CartPage() {
     ];
     const mockData = false;
     const [cartData, setCartdata] = useState([]);
-    const baseUrl = import.meta.env.VITE_API_URL;
     const dispatch = useDispatch();
-    // If mockData is false, fetch data from the API
-    const token = localStorage.getItem('token'); // Retrieve the token from localStorage or wherever you store it
     const [loading, setLoading] = useState(false)
 
     const fetchCartData = async () => {
-        await axios.get(baseUrl + '/cart/products', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        }).then((response) => {
-            // console.log(response)
-            if (response.status === 200) {
-                console.log(response.data.data)
-                setCartdata(response.data.data); // Update state with fetched cart data
+
+        try {
+            const response = await authorizedFetch("/cart/products", "GET", null, dispatch);
+            // console.log(response);
+            if (response.data.success && response.data.data) {
+                setCartdata(response.data.data);
             } else {
-                console.error('Failed to fetch cart data:', response.status);
+                console.error('Error fetching cart data:', response.message);
             }
-        }).catch((error) => {
-            console.error('Error fetching cart data:', error.message);
-        }).finally(() => {
+        } catch (error) {
+            console.error('Error fetching cart data:', error);
+        } finally {
             setLoading(false);
-        }); // Make GET request to fetch cart data
+        }
     };
 
     useEffect(() => {
         if (mockData) {
             setCartdata(cartItems);
         } else {
-            setLoading(true);   
+            setLoading(true);
             fetchCartData();
         }
     }, [mockData])
 
     // Handle Quantity Change (Increase/Decrease)
-    const handleQuantityChange = (id, quantity) => {
-        setLoading(true);
-        axios.post(baseUrl + '/cart/update-product/' + id,
-            { quantity: quantity },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            }).then((response) => {
-                if (response.status === 200) {
-                    console.log('Quantity updated successfully');
-                    dispatch(setSuccessMessage('Quantity updated successfully'));
-                    fetchCartData();
-                } else {
-                    console.error('Failed to update quantity:', response.status);
-                    dispatch(setErrorMessage('Failed to update quantity'));
-                }
-            }).catch((error) => {
-                console.error('Failed to update quantity with Error: ', error.message);
-            }).finally(() => {
-                setLoading(false);
-            })
+    const handleQuantityChange = async (id, quantity) => {
+        try {
+            setLoading(true);
+            const response = await authorizedFetch("/cart/update-product/" + id, "POST", { quantity: quantity }, dispatch);
+            if (response.data.success) {
+                dispatch(setSuccessMessage('Quantity updated successfully'));
+                fetchCartData();
+            } else {
+                dispatch(setErrorMessage('Failed to update quantity'));
+            }
+        } catch (error) {
+            console.error('Failed to update quantity with Error: ', error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Handle Delete Product from Cart
-    const handleDeleteProduct = (id) => {
-        setLoading(true);
-        axios.delete(baseUrl + '/cart/delete-product/' + id, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        }).then((response) => {
-            if (response.status === 200) {
-                console.log('Product deleted successfully');
+    const handleDeleteProduct = async (id) => {
+        try {
+            setLoading(true);
+            const response = await authorizedFetch("/cart/delete-product/" + id, "DELETE", null, dispatch);
+            if (response.data.success) {
                 dispatch(setSuccessMessage('Product deleted successfully'));
                 fetchCartData();
             } else {
-                console.error('Failed to delete product:', response.status);
                 dispatch(setErrorMessage('Failed to delete product'));
             }
-        }).catch((error) => {
+        } catch (error) {
             console.error('Error deleting product:', error.message);
-        }).finally(() => {
+        } finally {
             setLoading(false);
-        });
+        };
     };
-
-    // Calculate Total Price
-    // const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
     return (
         <>

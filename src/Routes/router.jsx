@@ -8,6 +8,7 @@ import { Route, createBrowserRouter, createRoutesFromElements } from 'react-rout
 import ErrorPage from '../Pages/ErrorPage.jsx'
 import CartPage from '../Pages/CartPage.jsx'
 import ProtectedRoute from '../Components/ProtectedRoute.jsx'
+import ShippingDetails from '../Pages/ShippingDetails.jsx'
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,6 +23,13 @@ export const router = createBrowserRouter(
           path='/cart' element={
             <ProtectedRoute>
               <CartPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/shipping-address' element={
+            <ProtectedRoute>
+              <ShippingDetails />
             </ProtectedRoute>
           }
         />
