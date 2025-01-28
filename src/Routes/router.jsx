@@ -9,6 +9,8 @@ import ErrorPage from '../Pages/ErrorPage.jsx'
 import CartPage from '../Pages/CartPage.jsx'
 import ProtectedRoute from '../Components/ProtectedRoute.jsx'
 import ShippingDetails from '../Pages/ShippingDetails.jsx'
+import PaymentSuccess from '../Pages/PaymentSuccess.jsx'
+import OrderConfirmation  from '../Pages/OrderConfirmation.jsx'
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,6 +21,9 @@ export const router = createBrowserRouter(
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<RegistrationPage />} />
         <Route path='/page-not-found' element={<ErrorPage />} />
+        <Route path='/payment-Success' element={<PaymentSuccess />} />
+        <Route path='/order-confirm' element={<OrderConfirmation />} />
+
         <Route
           path='/cart' element={
             <ProtectedRoute>

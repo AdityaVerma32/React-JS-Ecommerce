@@ -15,5 +15,6 @@ const shippingDetailsSlice = createSlice({
 })
 
 export const { addShippingDetails } = shippingDetailsSlice.actions;
+export const selectShippingDetails = (state) => state.shippingDetails.ShippingDetails;
 
 export default shippingDetailsSlice.reducer;

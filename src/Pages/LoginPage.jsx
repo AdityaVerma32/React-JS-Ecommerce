@@ -39,10 +39,8 @@ function LoginPage() {
       dispatch(LoginRequest());
       try {
         const response = await axios.post(baseURL + '/auth/login', { email, password });
-        console.log(response.data);
         if (response.status === 200 && response.data.success === true) {
           dispatch(LoginSuccess(response.data));
-          console.log(response.data.data.role);
           if (response.data.data.role === import.meta.env.VITE_USER) {
             navigate('/');
           } else if (response.data.role === import.meta.env.VITE_ADMIN) {

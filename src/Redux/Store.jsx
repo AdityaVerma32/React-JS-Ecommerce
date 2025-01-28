@@ -6,7 +6,7 @@ import rootReducer from './rootReducer'; // Combine your slices here
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: ["auth","cart","shippingDetails"], // Persist only the 'auth' slice, add other slice names if needed
+    whitelist: ["auth"], // Persist only the 'auth' slice, add other slice names if needed
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

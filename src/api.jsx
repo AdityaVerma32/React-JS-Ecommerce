@@ -1,6 +1,7 @@
 // src/api/userAPI.js
-
+import axios from "axios";
 let baseURL = import.meta.env.VITE_API_URL;
+
 
 export const registerUser = async (userData) => {
     console.log(baseURL + '/auth/register');
@@ -24,23 +25,19 @@ export const registerUser = async (userData) => {
 export const fetchProductById = async (id) => {
     try {
 
-        const response = await fetch(baseURL + `/products/${id}`, {
-            method: 'GET',
+        const response = await axios.get(baseURL + `/products/${id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
             },
         });
 
-        if (!response.ok) {
+        if (!response.data.success) {
             throw new Error('Some Error occurred');
         }
 
-        // Parse JSON response
-        const jsonResponse = await response.json();
-
         // Return the 'data' property if it exists
-        return jsonResponse;
+        return response.data.data;
     } catch (error) {
         console.error('Error fetching product:', error);
         throw error; // Re-throw the error for the caller to handle

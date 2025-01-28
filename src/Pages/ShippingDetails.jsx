@@ -4,9 +4,11 @@ import ErrorMessage from '../Components/ErrorMessage';
 import SuccessMessage from '../Components/SuccessMessage';
 import Loader from '../Components/Loader';
 import { authorizedFetch } from '../Utils/authorizedFetch';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setSuccessMessage, setErrorMessage } from '../Redux/Slice/PopUpMessageSlice';
 import Swal from 'sweetalert2';
+import { addOrder } from '../Redux/Slice/OrderSlice';
+import { useNavigate } from 'react-router-dom';
 
 function ShippingDetails() {
     const [savedAddresses, setSavedAddresses] = useState([]);
@@ -21,6 +23,9 @@ function ShippingDetails() {
         phoneNo: "",
     });
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const cartId = useSelector((state) => state.cart.cartData);
+
 
 
     const handleAddressSelect = (addressId) => {
@@ -131,7 +136,8 @@ function ShippingDetails() {
         }
     }
 
-    const handleProceedToPayment = () => {
+    const handleProceedToPayment = async () => {
+        
         if (!selectedAddress) {
             Swal.fire({
                 title: 'No selected address',
@@ -143,6 +149,22 @@ function ShippingDetails() {
                     confirmButton: 'bg-blue-500 text-white hover:bg-blue-600',
                 },
             })
+            return;
+        }  
+
+        
+        if(cartId == null){
+            dispatch(setErrorMessage("Some Error Occurred!"));
+        }else{
+            console.log( JSON.stringify({ cartId, addressId: selectedAddress }));
+            const response = await authorizedFetch('/orders/create-order', 'POST', JSON.stringify({ cartId, addressId: selectedAddress }), dispatch);
+            if(response.data.success){
+                console.log(response.data.data);
+                dispatch(addOrder(response.data.data));
+                navigate('/order-confirm')
+            }else{
+                dispatch(setErrorMessage("Some Error Occurred!"));
+            }
         }
     }
 
@@ -168,7 +190,7 @@ function ShippingDetails() {
                             <AddressCard
                                 key={address.id}
                                 address={address}
-                                isSelected={selectedAddress == address.id}
+                                isSelected={selectedAddress && selectedAddress == address.id}
                                 onSelect={handleAddressSelect}
                                 onEdit={SaveEditedPassword}
                                 onDelete={deleteAddress}

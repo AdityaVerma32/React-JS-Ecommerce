@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import CartProduct from '../Components/Cart/CartProduct';
 import { setErrorMessage, setSuccessMessage } from '../Redux/Slice/PopUpMessageSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import SuccessMessage from '../Components/SuccessMessage';
 import Loader from '../Components/Loader';
 import { authorizedFetch } from '../Utils/authorizedFetch';
-import  { addCart } from '../Redux/Slice/CartSlice';
 import { useNavigate } from 'react-router-dom';
+import { addOrder } from '../Redux/Slice/OrderSlice';
+import { addOrderInProgress } from '../Redux/Slice/OrderInProgressSlice';
+import ErrorMessage from '../Components/ErrorMessage';
+
 function CartPage() {
 
     const cartItems = [
@@ -61,15 +64,20 @@ function CartPage() {
     ];
     const mockData = false;
     const [cartData, setCartdata] = useState([]);
+    const [cartId, setCartid] = useState(null);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
+    const orderInProgressData = useSelector((state) => state.orderInProgressData)
 
     const fetchCartData = async () => {
         try {
             const response = await authorizedFetch("/cart/products", "GET", null, dispatch);
             if (response.data.success && response.data.data) {
                 setCartdata(response.data.data);
+                // The cart item in the order in progress is the first item in the array
+                dispatch(addOrderInProgress(response.data.data));
+                setCartid(response.data.data[0].cart.id);
             } else {
                 console.error('Error fetching cart data:', response.message);
             }
@@ -80,14 +88,20 @@ function CartPage() {
         }
     };
 
-    const handleProceedToCheckout = () => {
-        console.log("Inside Cart")
+
+
+    const handleProceedToCheckout = async () => {
         if (cartData.length === 0) {
             dispatch(setErrorMessage('Cart is empty'));
             return;
-        }else{
-            dispatch(addCart(cartData));
-            navigate('/shipping-address');
+        } else {
+            const response = await authorizedFetch('/orders/create-order', 'POST', JSON.stringify({ cartId }), dispatch);
+            if (response.data.success) {
+                dispatch(addOrder(response.data.data));
+                navigate('/order-confirm')
+            } else {
+                dispatch(setErrorMessage("Some Error Occurred!"));
+            }
         }
     }
 
@@ -138,24 +152,25 @@ function CartPage() {
 
     return (
         <>
-            <div className="max-w-7xl mx-auto p-6">
+            <div className="flex-grow max-w-7xl mx-auto p-6">
                 <SuccessMessage />
-                {/* <ErrorMessage /> */}
+                <ErrorMessage />
                 {loading && <Loader />}
                 <h1 className="text-3xl font-semibold text-gray-900 mb-6">Your Cart</h1>
                 {cartData.length === 0 ? (
-                    <p className="text-xl text-center text-gray-500">Your cart is empty!</p>
+                    <div className="flex items-center justify-center h-64">
+                        <p className="text-xl text-center text-gray-500">Your cart is empty!</p>
+                    </div>
                 ) : (
                     <div className="space-y-6">
-                        {
-                            cartData.map((item) => (
-                                <CartProduct
-                                    key={item.product.id}
-                                    item={item}
-                                    handleQuantityChange={handleQuantityChange}
-                                    handleDeleteProduct={handleDeleteProduct}
-                                />
-                            ))}
+                        {cartData.map((item) => (
+                            <CartProduct
+                                key={item.product.id}
+                                item={item}
+                                handleQuantityChange={handleQuantityChange}
+                                handleDeleteProduct={handleDeleteProduct}
+                            />
+                        ))}
                     </div>
                 )}
 
@@ -176,6 +191,7 @@ function CartPage() {
                     </div>
                 )}
             </div>
+
         </>
     );
 }
