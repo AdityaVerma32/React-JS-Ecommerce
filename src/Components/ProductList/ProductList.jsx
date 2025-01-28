@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { mockProducts } from '../../mockProductData'
 import ProductGrid from '../ProductList/ProductGrid'
 import ErrorMessage from '../ErrorMessage';
-import { Navigate } from 'react-router-dom';
+import { fetchAllProducts } from '../../api';
 
 function ProductList() {
 
@@ -11,23 +11,24 @@ function ProductList() {
     const mockData = false;
 
     useEffect(() => {
-        if (mockData) {
-            setProducts(mockProducts);
-            setLoading(false);
-        } else {
-            // fetch data from your server here
-            fetch(import.meta.env.VITE_API_URL + "/products")
-                .then(response => response.json())
-                .then(data => {
-                    setProducts(data.data);
-                })
-                .catch(error => {
-                    console.error('There was an error!', error);
-                }).finally(() => {
-                    setLoading(false);
-                });
-        }
-    }, [mockData])
+        const fetchProducts = async () => {
+            try {
+                if (mockData) {
+                    setProducts(mockProducts);
+                } else {
+                    const response = await fetchAllProducts();
+                    setProducts(response);
+                }
+            } catch (error) {
+                console.error("Failed to fetch products:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, [mockData]);
+
 
     if (loading) {
         return (

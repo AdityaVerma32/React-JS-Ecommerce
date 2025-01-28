@@ -43,3 +43,23 @@ export const fetchProductById = async (id) => {
         throw error; // Re-throw the error for the caller to handle
     }
 };
+
+export const fetchAllProducts = async () => {
+    try {
+        const response = await axios.get(baseURL + '/products', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+        });
+
+        if (!response.data.success) {
+            throw new Error('Some Error occurred');
+        }
+
+        return response.data.data;
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        throw error; // Re-throw the error for the caller to handle
+    }
+} 

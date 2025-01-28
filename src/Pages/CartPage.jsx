@@ -91,6 +91,7 @@ function CartPage() {
 
 
     const handleProceedToCheckout = async () => {
+        setLoading(true);
         if (cartData.length === 0) {
             dispatch(setErrorMessage('Cart is empty'));
             return;
@@ -98,8 +99,10 @@ function CartPage() {
             const response = await authorizedFetch('/orders/create-order', 'POST', JSON.stringify({ cartId }), dispatch);
             if (response.data.success) {
                 dispatch(addOrder(response.data.data));
+                setLoading(false);
                 navigate('/order-confirm')
             } else {
+                setLoading(false);
                 dispatch(setErrorMessage("Some Error Occurred!"));
             }
         }
