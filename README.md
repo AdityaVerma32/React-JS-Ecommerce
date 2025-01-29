@@ -1,5 +1,7 @@
 **# E-Commerce Platform**
 
+**Vedio:** https://drive.google.com/file/d/1D1DMfdWuPWUJZRZvnXjq85Zc4VAzArJC/view?usp=sharing
+
 **## Introduction**
 
 This project is a full-fledged E-Commerce Platform built using React.js for the frontend and Spring Boot for the backend. It provides a seamless online shopping experience with secure authentication, robust state management, inventory tracking, and integrated payment processing.
