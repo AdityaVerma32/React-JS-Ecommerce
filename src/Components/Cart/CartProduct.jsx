@@ -16,7 +16,7 @@ function CartProduct({ item, handleQuantityChange, handleDeleteProduct }) {
             {/* Product Details */}
             <div className="flex-1 ml-4">
                 <h3 className="text-lg font-semibold text-gray-900">{item.product.productName}</h3>
-                <p className="text-sm text-gray-600">${item.product.price.toFixed(2)}</p>
+                <p className="text-sm text-gray-600">&#8377;  {item.product.price.toFixed(2)}</p>
             </div>
 
             {/* Quantity Control */}

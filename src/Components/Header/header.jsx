@@ -7,16 +7,22 @@ import { useNavigate } from 'react-router-dom';
 function header() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showCart, setShowCart] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = localStorage.getItem('token'); // Check if user info is in localStorage (or use your preferred method)
   const { token } = useSelector((state) => state.auth);
+  const { role } = useSelector((state) => state.auth);
   // Example: Check user login status (You can modify this logic based on how you store authentication data, e.g., localStorage, cookies)
   useEffect(() => {
     if (user && token) {
       setIsLoggedIn(true); // User is logged in
     } else {
       setIsLoggedIn(false); // User is not logged in
+    }
+
+    if(role === 'ROLE_ADMIN'){
+      setShowCart(false);
     }
   }, []);
 
@@ -40,14 +46,14 @@ function header() {
           alt="Logo"
           className="h-10 w-10 object-contain"
         />
-        <h1 className="text-white text-lg font-bold ml-2">AppName</h1>
+        <h1 className="text-white text-lg font-bold ml-2">StoreLoom</h1>
       </div>
       </Link>
 
       {/* Right Section */}
       <div className="flex items-center space-x-4">
         {/* Cart */}
-        <button
+        {showCart && (<button
           onClick={handleCartClick}
           className="flex items-center text-white hover:text-gray-300">
           <svg
@@ -65,7 +71,7 @@ function header() {
             />
           </svg>
           <span className="ml-1">Cart</span>
-        </button>
+        </button>)}
 
         {/* Conditional Login/Logout Button */}
         {isLoggedIn ? (

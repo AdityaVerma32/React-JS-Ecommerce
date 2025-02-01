@@ -8,13 +8,16 @@ const OrderConfirmation = () => {
 
     const dispatch = useDispatch();
     const { orderData } = useSelector((state) => state.order);
-
+    const navigate = useNavigate();
     const [order, setOrder] = useState([])
 
     useEffect(() => {
+        console.log(orderData);
         if (orderData) {
             console.log("Order Details: " + orderData.Order_details);
             setOrder(orderData.Order_details);
+        }else{
+            navigate('/cart');
         }
     }, [orderData])
 

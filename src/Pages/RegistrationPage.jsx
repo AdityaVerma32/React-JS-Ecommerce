@@ -66,29 +66,35 @@ function RegistrationPage() {
             setLoading(true);  // Show loading spinner while registering
             // Make API call to register the user
             try {
-                const response = await registerUser(formData);  // Registration API
-                setFormData({
-                    email: "",
-                    password: "",
-                    firstName: "",
-                    lastName: "",
-                })
-                console.log('User registered successfully', response);
+                const response = await registerUser(formData); // Registration API
 
-                // Set popup message on successful registration
-                setPopupMessage({ type: 'success', message: 'Registration successful! Please log in.' });
+                if (response.status === 201) {
+                    // Set popup message on successful registration
+                    setPopupMessage({ type: 'success', message: 'Registration successful! Please log in.' });
 
+                    // Clear form data
+                    setFormData({
+                        email: "",
+                        password: "",
+                        firstName: "",
+                        lastName: "",
+                    });
+                }
                 // Hide the popup after 3 seconds (optional)
                 setTimeout(() => {
-                    setPopupMessage(null);  // Hide the popup after 3 seconds
+                    setPopupMessage(null);
                 }, 5000);
 
             } catch (error) {
-                console.error('Error during registration:', error);
-                setPopupMessage({ type: 'error', message: 'Registration failed. Please try again.' });
+                if (error.response && error.response.status === 409) {
+                    setPopupMessage({ type: 'error', message: 'User already exists.' });
+                } else {
+                    setPopupMessage({ type: 'error', message: 'Registration failed. Please try again.' });
+                }
             } finally {
                 setLoading(false); // Stop loader
             }
+
         }
     };
 

@@ -47,12 +47,12 @@ function footer() {
               <span className="font-bold">Address:</span> 123 Main Street, City, Country
             </li>
             <li>
-              <span className="font-bold">Phone:</span> +1 234 567 890
+              <span className="font-bold">Phone:</span> +91 8791585856
             </li>
             <li>
               <span className="font-bold">Email:</span>{" "}
               <a href="mailto:info@example.com" className="hover:text-white">
-                info@example.com
+                vermapradeeep5@gmail.com
               </a>
             </li>
           </ul>
@@ -62,7 +62,7 @@ function footer() {
       {/* Bottom Bar */}
       <div className="mt-6 border-t border-gray-700 pt-4 text-center">
         <p className="text-sm">
-          &copy; {new Date().getFullYear()} AppName. All Rights Reserved.
+          &copy; {new Date().getFullYear()} StoreLoom. All Rights Reserved.
         </p>
       </div>
     </footer>

@@ -4,22 +4,17 @@ let baseURL = import.meta.env.VITE_API_URL;
 
 
 export const registerUser = async (userData) => {
-    console.log(baseURL + '/auth/register');
-    console.log(JSON.stringify(userData));
-    const response = await fetch(baseURL + '/auth/register', {
-        method: 'POST',
+
+    const response = await axios.post(
+        baseURL + '/auth/register',
+        JSON.stringify(userData), {
         headers: {
             'Content-Type': 'application/json', // Correct Content-Type
             'Accept': 'application/json'
-        },
-        body: JSON.stringify(userData),
+        }
     });
 
-    if (!response.ok) {
-        throw new Error('Registration failed');
-    }
-
-    return await response.json();
+    return response;
 };
 
 export const fetchProductById = async (id) => {

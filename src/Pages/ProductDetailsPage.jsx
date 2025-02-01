@@ -71,7 +71,7 @@ function ProductDetailsPage() {
         <div className="md:w-1/2 md:pl-10">
           <h1 className="text-3xl font-semibold text-gray-900 mb-4">{product.productName}</h1>
           <p className="text-xl text-gray-700 mb-4">
-            <strong>Price:</strong> ${product.price}
+            <strong>Price:</strong> &#8377; {product.price}
           </p>
           <p className="text-lg text-gray-600 mb-6">
             <strong>Stock:</strong> {product.available_quantity} available

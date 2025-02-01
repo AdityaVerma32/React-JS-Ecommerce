@@ -96,8 +96,11 @@ function CartPage() {
             dispatch(setErrorMessage('Cart is empty'));
             return;
         } else {
+            console.log("Debug 1");
             const response = await authorizedFetch('/orders/create-order', 'POST', JSON.stringify({ cartId }), dispatch);
             if (response.data.success) {
+                console.log("Debug 2");
+                console.log("Debug 3: ",response.data.data);
                 dispatch(addOrder(response.data.data));
                 setLoading(false);
                 navigate('/order-confirm')
