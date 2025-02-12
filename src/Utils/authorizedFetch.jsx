@@ -17,18 +17,18 @@ function isTokenExpired(token) {
     return Date.now() >= exp * 1000;
 }
 
-export async function authorizedFetch(endpoint, method = "GET", data = null,dispatch) {
+export async function authorizedFetch(endpoint, method = "GET", data = null, dispatch) {
     try {
-        
+
         let token = localStorage.getItem("token");
 
         if (!token) {
-            dispatch(setErrorMessage("Please log in again"));
+            dispatch(setErrorMessage("Please log In."));
             return;
         }
 
         if (isTokenExpired(token)) {
-            console.warn("Token has expired. Please log in again");
+            console.warn("Session Expired. Please log in again");
             localStorage.removeItem("token");
             Navigate("/");
         }

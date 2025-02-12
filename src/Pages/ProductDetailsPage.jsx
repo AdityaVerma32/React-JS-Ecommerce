@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import Loader from '../Components/Loader';
 import { useParams } from 'react-router-dom';
 import { fetchProductById } from '../api'
-import axios from 'axios';
 import SuccessMessage from '../Components/SuccessMessage';
 import { useDispatch } from 'react-redux';
 import { setSuccessMessage } from '../Redux/Slice/PopUpMessageSlice';

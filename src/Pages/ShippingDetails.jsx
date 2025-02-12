@@ -121,7 +121,7 @@ function ShippingDetails() {
         }
     };
 
-    const fetchSavedAddress = async () => {
+    const   fetchSavedAddress = async () => {
         try {
             const response = await authorizedFetch('/shipping/fetch-all', 'GET', null, dispatch);
             if (response.data.success) {

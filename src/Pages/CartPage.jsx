@@ -68,7 +68,6 @@ function CartPage() {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
-    const orderInProgressData = useSelector((state) => state.orderInProgressData)
 
     const fetchCartData = async () => {
         try {
@@ -88,8 +87,6 @@ function CartPage() {
         }
     };
 
-
-
     const handleProceedToCheckout = async () => {
         setLoading(true);
         if (cartData.length === 0) {
@@ -99,8 +96,6 @@ function CartPage() {
             console.log("Debug 1");
             const response = await authorizedFetch('/orders/create-order', 'POST', JSON.stringify({ cartId }), dispatch);
             if (response.data.success) {
-                console.log("Debug 2");
-                console.log("Debug 3: ",response.data.data);
                 dispatch(addOrder(response.data.data));
                 setLoading(false);
                 navigate('/order-confirm')

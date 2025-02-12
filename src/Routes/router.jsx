@@ -12,6 +12,7 @@ import ShippingDetails from '../Pages/ShippingDetails.jsx'
 import PaymentSuccess from '../Pages/PaymentSuccess.jsx'
 import OrderConfirmation from '../Pages/OrderConfirmation.jsx'
 import AdminDashboard from '../Pages/AdminDashboard.jsx'
+import UserDetails from '../Pages/UserDetails.jsx'
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,12 +23,18 @@ export const router = createBrowserRouter(
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<RegistrationPage />} />
         <Route path='/page-not-found' element={<ErrorPage />} />
-        <Route path='/admin-dashboard' element={<AdminDashboard/>}/>
-
+        <Route path='/admin-dashboard' element={<AdminDashboard />} />
         <Route
           path='/cart' element={
             <ProtectedRoute>
               <CartPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/user/:id' element={
+            <ProtectedRoute>
+              <UserDetails />
             </ProtectedRoute>
           }
         />

@@ -3,6 +3,7 @@ import { mockProducts } from '../../mockProductData'
 import ProductGrid from '../ProductList/ProductGrid'
 import ErrorMessage from '../ErrorMessage';
 import { fetchAllProducts } from '../../api';
+import SuccessMessage from '../SuccessMessage';
 
 function ProductList() {
 
@@ -51,6 +52,7 @@ function ProductList() {
 
     return (
         <div className="p-6">
+            <SuccessMessage />
             <ErrorMessage />
             <h1 className="text-2xl font-bold mb-6">Product Listing</h1>
             <ProductGrid products={products} />
