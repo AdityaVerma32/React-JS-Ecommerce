@@ -3,6 +3,9 @@ import Loader from '../Components/Loader';
 import { authorizedFetch } from '../Utils/authorizedFetch';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import SuccessMessage from '../Components/SuccessMessage';
+import ErrorMessage from '../Components/ErrorMessage';
+import { setSuccessMessage } from '../Redux/Slice/PopUpMessageSlice';
 
 function UserDetails() {
     const [user, setUser] = useState({});
@@ -12,6 +15,26 @@ function UserDetails() {
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const dispatch = useDispatch();
+
+    const saveDetails = async () => {
+        try {
+            setLoading(true);
+            if (user == editedUser) {
+                console.log("No changes made to user data");
+            } else {
+                const response = await authorizedFetch(`/user/update/${id}`, "PUT", editedUser, dispatch);
+                if (response.status === 200) {
+                    setUser(editedUser);
+                    dispatch(setSuccessMessage("User details updated successfully"));
+                    setIsEditing(false);
+                }
+            }
+        } catch (error) {
+            console.error("Error updating user data:", error);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -36,6 +59,8 @@ function UserDetails() {
     return (
         <div className="flex flex-col md:flex-row items-center max-w-7xl mx-auto p-32 space-x-6 h-72">
             {loading && <Loader />}
+            <SuccessMessage />
+            <ErrorMessage />
             {/* Profile SVG */}
             <div className="flex-shrink-0 w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center">
                 <svg
@@ -79,6 +104,8 @@ function UserDetails() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-96">
                         <h2 className="text-xl font-bold mb-4">Edit Details</h2>
+
+                        <label className="block text-gray-700 font-medium mb-1">First Name</label>
                         <input
                             className="border p-2 w-full rounded mb-2"
                             value={editedUser.firstName}
@@ -87,6 +114,8 @@ function UserDetails() {
                             }
                             placeholder="First Name"
                         />
+
+                        <label className="block text-gray-700 font-medium mb-1">Last Name</label>
                         <input
                             className="border p-2 w-full rounded mb-2"
                             value={editedUser.lastName}
@@ -95,10 +124,11 @@ function UserDetails() {
                             }
                             placeholder="Last Name"
                         />
-                        <div className="flex justify-end">
+
+                        <div className="flex justify-end mt-4">
                             <button
                                 className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-                            >
+                                onClick={saveDetails}>
                                 Save
                             </button>
                             <button
@@ -110,6 +140,7 @@ function UserDetails() {
                         </div>
                     </div>
                 </div>
+
             )}
         </div>
     );

@@ -24,6 +24,7 @@ export const router = createBrowserRouter(
         <Route path='/register' element={<RegistrationPage />} />
         <Route path='/page-not-found' element={<ErrorPage />} />
         <Route path='/admin-dashboard' element={<AdminDashboard />} />
+        {/* <Route path='/payment-Success' element={<PaymentSuccess />} /> */}
         <Route
           path='/cart' element={
             <ProtectedRoute>

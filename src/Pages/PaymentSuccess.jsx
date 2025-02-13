@@ -55,9 +55,7 @@ const PaymentSuccess = () => {
     }
 
     console.log(orderDetails);
-    
-
-    if (orderDetails!=null) {
+    if (orderDetails != null) {
         return (
             <div className="container max-w-4xl mx-auto p-6" >
                 <div className="bg-green-50 border border-green-400 rounded-lg p-6 mb-6">
@@ -95,6 +93,13 @@ const PaymentSuccess = () => {
                             <p>{orderDetails[0]?.orders?.shippingAddress?.country}</p>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+                        onClick={() => navigate('/')}
+                    >
+                        Go to Home!
+                    </button>
                 </div>
             </div >
         );
